@@ -1,0 +1,25 @@
+/* Font family */
+@font-face {
+	font-family: "Comicrazy";
+	src: url(comicrazy.ttf);
+}
+
+@font-face {
+	font-family: "Comicrazy-BoldItalic";
+	src: url(comicrazy-bolditalic.ttf);
+}
+
+@font-face {
+	font-family: "Burbank";
+	src: url(burbank.ttf);
+}
+
+html {
+	font-family: "Comicrazy";
+}
+
+/* */
+#game-box {
+	display: flex;
+	justify-content: center;
+}
