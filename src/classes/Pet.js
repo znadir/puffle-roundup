@@ -116,11 +116,6 @@ export default class Pet extends Phaser.Physics.Matter.Sprite {
 	}
 
 	makeFleeMouse() {
-		// add listenever everytime mouse click and log x and y
-		this.scene.input.addListener("pointerdown", () => {
-			const mousePos = this.scene.input.activePointer;
-			console.log(mousePos.x, mousePos.y);
-		});
 		this.scene.input.addListener("pointermove", () => {
 			const mousePos = this.scene.input.activePointer;
 			const distanceMin = 30;

@@ -8,6 +8,8 @@ import petsJson from "../assets/pets.json";
 import Background from "./Background.js";
 import goal from "../assets/goal.png";
 import goalShape from "../assets/goalShape.json";
+import safeZone from "../assets/safeZone.png";
+import safeZoneShape from "../assets/safeZoneShape.json";
 
 export default class Game extends Background {
 	constructor() {
@@ -37,6 +39,8 @@ export default class Game extends Background {
 		this.load.atlas("pets-atlas", petsPng, petsJson);
 		this.load.image("goal", goal);
 		this.load.json("goal-shape", goalShape);
+		this.load.image("safe-zone", safeZone);
+		this.load.json("safe-zone-shape", safeZoneShape);
 	}
 
 	create() {
@@ -68,8 +72,15 @@ export default class Game extends Background {
 		this.goal = this.matter.add.image(wall.x, wall.y, "goal", null, {
 			shape: goalShape,
 		});
-		this.goal.setCollisionGroup(-1);
+		this.goal.setCollidesWith([]);
 		this.goal.setVisible(false);
+
+		// pets must not leave safe zone
+		this.safeZone = this.matter.add.image(760, 480, "safe-zone", null, {
+			shape: safeZoneShape,
+		});
+		this.safeZone.setCollidesWith([]);
+		this.safeZone.setVisible(false);
 
 		this.addStats();
 		this.addCountdown();
@@ -77,6 +88,7 @@ export default class Game extends Background {
 
 	update() {
 		this.pets.getChildren().forEach((pet) => {
+			// verify pets are caught in the goal
 			const overlaps = this.matter.overlap(pet, this.goal);
 
 			if (!pet.overlaps && overlaps) {
@@ -85,6 +97,14 @@ export default class Game extends Background {
 			} else if (pet.overlaps && !overlaps) {
 				pet.overlaps = false;
 				this.incCaught(-1);
+			}
+
+			// verify pets are not leaving safe zone
+			const safe = this.matter.overlap(pet, this.safeZone);
+
+			if (!safe) {
+				this.incEscaped(1);
+				this.pets.remove(pet, true, false);
 			}
 		});
 	}
@@ -137,7 +157,7 @@ export default class Game extends Background {
 		this.caughtText = this.add
 			.text(400, 10, "CAUGHT: 0", this.statsStyle)
 			.setOrigin(1, 0);
-		this.add
+		this.escapedText = this.add
 			.text(
 				400,
 				this.caughtText.displayHeight + 10,
@@ -152,5 +172,14 @@ export default class Game extends Background {
 		caughtNumber += number;
 
 		this.caughtText.setText("CAUGHT: " + caughtNumber);
+	}
+
+	incEscaped(number) {
+		let escapedNumber = parseInt(
+			this.escapedText.text.replace("ESCAPED: ", "")
+		);
+		escapedNumber += number;
+
+		this.escapedText.setText("ESCAPED: " + escapedNumber);
 	}
 }
