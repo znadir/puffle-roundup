@@ -6,6 +6,8 @@ import Pet from "../classes/Pet.js";
 import petsPng from "../assets/pets.png";
 import petsJson from "../assets/pets.json";
 import Background from "./Background.js";
+import goal from "../assets/goal.png";
+import goalShape from "../assets/goalShape.json";
 
 export default class Game extends Background {
 	constructor() {
@@ -33,32 +35,58 @@ export default class Game extends Background {
 		this.load.json("wall-shape", wallShape);
 		this.load.atlas("countdown-atlas", countdownPng, countdownJson);
 		this.load.atlas("pets-atlas", petsPng, petsJson);
+		this.load.image("goal", goal);
+		this.load.json("goal-shape", goalShape);
 	}
 
 	create() {
 		super.create();
 
 		const wallShape = this.cache.json.get("wall-shape");
-		this.matter.add.sprite(760, 480 + 150, "wall", null, {
+		const wall = this.matter.add.sprite(760, 480 + 150, "wall", null, {
 			shape: wallShape,
 			isStatic: true,
 		});
 
 		// pets
-		this.pet = new Pet(this, 1181, 618);
-		this.pet = new Pet(this, 1105, 474);
-		this.pet = new Pet(this, 938, 340);
-		this.pet = new Pet(this, 750, 396);
-		this.pet = new Pet(this, 633, 336);
-		this.pet = new Pet(this, 825, 239);
-		this.pet = new Pet(this, 395, 291);
-		this.pet = new Pet(this, 537, 97);
-		this.pet = new Pet(this, 457, 437);
-		this.pet = new Pet(this, 324, 577);
-		this.pet = new Pet(this, 500, 692);
+		this.pets = this.add.group();
+		this.pets.addMultiple([
+			new Pet(this, 1181, 618),
+			new Pet(this, 1105, 474),
+			new Pet(this, 938, 340),
+			new Pet(this, 750, 396),
+			new Pet(this, 633, 336),
+			new Pet(this, 825, 239),
+			new Pet(this, 395, 291),
+			new Pet(this, 537, 97),
+			new Pet(this, 457, 437),
+			new Pet(this, 324, 577),
+			new Pet(this, 500, 692),
+		]);
+
+		// pets must be catched in the goal
+		this.goal = this.matter.add.image(wall.x, wall.y, "goal", null, {
+			shape: goalShape,
+		});
+		this.goal.setCollisionGroup(-1);
+		this.goal.setVisible(false);
 
 		this.addStats();
 		this.addCountdown();
+	}
+
+	update() {
+		this.pets.getChildren().forEach((pet) => {
+			const overlaps = this.matter.overlap(pet, this.goal);
+
+			if (!pet.overlaps && overlaps) {
+				pet.overlaps = true;
+				this.incCaught(1);
+			} else if (pet.overlaps && !overlaps) {
+				pet.overlaps = false;
+				this.incCaught(-1);
+			}
+		});
 	}
 
 	addCountdown() {
@@ -106,11 +134,23 @@ export default class Game extends Background {
 	}
 
 	addStats() {
-		const caughtText = this.add
+		this.caughtText = this.add
 			.text(400, 10, "CAUGHT: 0", this.statsStyle)
 			.setOrigin(1, 0);
 		this.add
-			.text(400, caughtText.displayHeight + 10, "ESCAPED: 0", this.statsStyle)
+			.text(
+				400,
+				this.caughtText.displayHeight + 10,
+				"ESCAPED: 0",
+				this.statsStyle
+			)
 			.setOrigin(1, 0);
+	}
+
+	incCaught(number) {
+		let caughtNumber = parseInt(this.caughtText.text.replace("CAUGHT: ", ""));
+		caughtNumber += number;
+
+		this.caughtText.setText("CAUGHT: " + caughtNumber);
 	}
 }
