@@ -14,6 +14,15 @@ const config = {
 	width: 760 * 2,
 	height: 480 * 2,
 	scene: [Menu, Instructions, Game],
+	physics: {
+		default: "matter",
+		matter: {
+			debug: true,
+			gravity: {
+				y: 0,
+			},
+		},
+	},
 };
 
 const game = new Phaser.Game(config);
