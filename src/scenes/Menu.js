@@ -1,21 +1,20 @@
-import background from "../assets/background.svg";
-import trees from "../assets/trees.svg";
 import playBox from "../assets/playBox.png";
+import Background from "./Background.js";
 
-export default class Menu extends Phaser.Scene {
+export default class Menu extends Background {
 	constructor() {
 		super("Menu");
 	}
 
 	preload() {
-		this.load.image("background", background);
-		this.load.image("trees", trees);
+		super.preload();
+
 		this.load.image("playBox", playBox);
 	}
 
 	create() {
-		this.add.image(-14, 0, "background").setOrigin(0, 0);
-		this.add.image(0, 760 * 2 - 574 + 20, "trees").setOrigin(0, 1);
+		super.create();
+
 		this.add.image(760, 100, "playBox").setOrigin(0.5, 0);
 
 		const startStyle = {

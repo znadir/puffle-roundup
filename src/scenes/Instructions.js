@@ -1,20 +1,23 @@
 import tutoJson from "../assets/tuto-anim.json";
 import tutoPng from "../assets/tuto-anim.png";
 import instruBox from "../assets/instruBox.png";
+import Background from "./Background.js";
 
-export default class Instructions extends Phaser.Scene {
+export default class Instructions extends Background {
 	constructor() {
 		super("Instructions");
 	}
 
 	preload() {
+		super.preload();
+
 		this.load.atlas("tuto-atlas", tutoPng, tutoJson);
 		this.load.image("instruBox", instruBox);
 	}
 
 	create() {
-		this.add.image(-14, 0, "background").setOrigin(0, 0);
-		this.add.image(0, 760 * 2 - 574 + 20, "trees").setOrigin(0, 1);
+		super.create();
+
 		this.add.image(760, 100, "instruBox").setOrigin(0.5, 0);
 
 		// tutorial animation

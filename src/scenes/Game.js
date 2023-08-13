@@ -2,31 +2,18 @@ import wall from "../assets/wall.png";
 import wallShape from "../assets/wallShape.json";
 import countdownPng from "../assets/countdown.png";
 import countdownJson from "../assets/countdown.json";
+import Pet from "../classes/Pet.js";
+import petsPng from "../assets/pets.png";
+import petsJson from "../assets/pets.json";
+import Background from "./Background.js";
 
-export default class Game extends Phaser.Scene {
+export default class Game extends Background {
 	constructor() {
 		super("Game");
-	}
 
-	preload() {
-		this.load.image("wall", wall);
-		this.load.json("wall-shape", wallShape);
-		this.load.atlas("countdown-atlas", countdownPng, countdownJson);
-	}
-
-	create() {
-		const gameAcceleration = 3;
-		const gameDurationSec = 120;
-		const wallShape = this.cache.json.get("wall-shape");
-
-		this.add.image(-14, 0, "background").setOrigin(0, 0);
-		this.add.image(0, 760 * 2 - 574 + 20, "trees").setOrigin(0, 1);
-		this.matter.add.sprite(760, 480 + 150, "wall", null, {
-			shape: wallShape,
-		});
-
-		// stats
-		const statsStyle = {
+		this.gameAcceleration = 3;
+		this.gameDurationSec = 120;
+		this.statsStyle = {
 			fontFamily: "Comicrazy",
 			color: "#ffffff",
 			fontSize: "35px",
@@ -37,15 +24,44 @@ export default class Game extends Phaser.Scene {
 				blur: 3,
 			},
 		};
+	}
 
-		const caughtText = this.add
-			.text(400, 10, "CAUGHT: 0", statsStyle)
-			.setOrigin(1, 0);
-		this.add
-			.text(400, caughtText.displayHeight + 10, "ESCAPED: 0", statsStyle)
-			.setOrigin(1, 0);
+	preload() {
+		super.preload();
 
-		// countdown
+		this.load.image("wall", wall);
+		this.load.json("wall-shape", wallShape);
+		this.load.atlas("countdown-atlas", countdownPng, countdownJson);
+		this.load.atlas("pets-atlas", petsPng, petsJson);
+	}
+
+	create() {
+		super.create();
+
+		const wallShape = this.cache.json.get("wall-shape");
+		this.matter.add.sprite(760, 480 + 150, "wall", null, {
+			shape: wallShape,
+			isStatic: true,
+		});
+
+		// pets
+		this.pet = new Pet(this, 1181, 618);
+		this.pet = new Pet(this, 1105, 474);
+		this.pet = new Pet(this, 938, 340);
+		this.pet = new Pet(this, 750, 396);
+		this.pet = new Pet(this, 633, 336);
+		this.pet = new Pet(this, 825, 239);
+		this.pet = new Pet(this, 395, 291);
+		this.pet = new Pet(this, 537, 97);
+		this.pet = new Pet(this, 457, 437);
+		this.pet = new Pet(this, 324, 577);
+		this.pet = new Pet(this, 500, 692);
+
+		this.addStats();
+		this.addCountdown();
+	}
+
+	addCountdown() {
 		this.anims.create({
 			key: "countdown-anim",
 			frames: this.anims.generateFrameNames("countdown-atlas", {
@@ -55,21 +71,21 @@ export default class Game extends Phaser.Scene {
 				suffix: ".png",
 			}),
 			repeat: 1,
-			duration: (gameDurationSec / gameAcceleration) * 1000,
+			duration: (this.gameDurationSec / this.gameAcceleration) * 1000,
 		});
+
 		const countdown = this.add
 			.sprite(1520 - 60, 15, "countdown")
 			.play("countdown-anim")
 			.setOrigin(1, 0);
 
-		// timer
 		const timer = this.add
 			.text(
 				countdown.x - countdown.displayWidth / 2,
 				countdown.y + countdown.displayHeight / 2,
-				gameDurationSec,
+				this.gameDurationSec,
 				{
-					...statsStyle,
+					...this.statsStyle,
 					fontSize: "25px",
 					color: "#000000",
 					stroke: "#ffffff",
@@ -78,8 +94,8 @@ export default class Game extends Phaser.Scene {
 			.setOrigin(0.5, 0.5);
 
 		this.time.addEvent({
-			delay: 1000 / gameAcceleration,
-			repeat: gameDurationSec,
+			delay: 1000 / this.gameAcceleration,
+			repeat: this.gameDurationSec,
 			callback: () => {
 				const time = parseInt(timer.text);
 				if (time > 0) {
@@ -87,5 +103,14 @@ export default class Game extends Phaser.Scene {
 				}
 			},
 		});
+	}
+
+	addStats() {
+		const caughtText = this.add
+			.text(400, 10, "CAUGHT: 0", this.statsStyle)
+			.setOrigin(1, 0);
+		this.add
+			.text(400, caughtText.displayHeight + 10, "ESCAPED: 0", this.statsStyle)
+			.setOrigin(1, 0);
 	}
 }
