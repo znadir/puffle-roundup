@@ -160,16 +160,7 @@ export default class Pet extends Phaser.Physics.Matter.Sprite {
 		}
 
 		// Array of available angles
-		const availableAngles = [
-			"0",
-			"45",
-			"90",
-			"135",
-			"180",
-			"225",
-			"270",
-			"315",
-		];
+		const availableAngles = this.animationKeys;
 
 		// Find the closest angle from the array
 		let closestAngle = availableAngles[0];
