@@ -3,7 +3,8 @@ name: Publish on Itch
 on: push
 
 env:
-  ITCH_GAME_PROJECT: joegamz/puffle-roundup-minigame
+  ITCH_USERNAME: joegamz
+  ITCH_GAME_ID: puffle-roundup-minigame
 
 jobs:
   deploy:
@@ -28,10 +29,10 @@ jobs:
         run: webpack --config webpack/prod.js
 
       # Step 5: Upload to Itch.io using itch-publish action
-      - name: Upload to itch.io project
-        uses: robpc/itchio-upload-action@v1
+      - uses: KikimoraGames/itch-publish@v0.0.3
         with:
-          path: dist
-          project: ${{ env.ITCH_GAME_PROJECT }}
-          channel: web
-          api-key: ${{ secrets.BUTLER_API_KEY }}
+          butlerApiKey: ${{secrets.BUTLER_API_KEY}}
+          gameData: ./dist
+          itchUsername: ${{env.ITCH_USERNAME}}
+          itchGameId: ${{ env.ITCH_GAME_ID }}
+          buildChannel: web
