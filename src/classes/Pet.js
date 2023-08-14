@@ -1,3 +1,5 @@
+import { randomInteger } from "../utils.js";
+
 export default class Pet extends Phaser.Physics.Matter.Sprite {
 	constructor(scene, x, y) {
 		super(scene.matter.world, x, y, "pet", null, {
@@ -18,6 +20,7 @@ export default class Pet extends Phaser.Physics.Matter.Sprite {
 			"yellow",
 		];
 		this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+		this.sensibility = randomInteger(30, 180);
 
 		this.scene.add.existing(this);
 
@@ -119,17 +122,15 @@ export default class Pet extends Phaser.Physics.Matter.Sprite {
 		this.scene.input.addListener("pointermove", () => {
 			const mousePos = this.scene.input.activePointer;
 			const distanceMin = 30;
-			const sensibility = 170;
-			const randomness = 50;
 
 			const distance =
 				Math.sqrt(
 					Math.pow(mousePos.x - this.x, 2) + Math.pow(mousePos.y - this.y, 2)
-				) - sensibility;
+				) - this.sensibility;
 
 			if (distance < distanceMin) {
-				const directionX = this.x - mousePos.x + Math.random() * randomness;
-				const directionY = this.y - mousePos.y + Math.random() * randomness;
+				const directionX = this.x - mousePos.x + Math.random();
+				const directionY = this.y - mousePos.y + Math.random();
 
 				const magnitude = Math.sqrt(directionX ** 2 + directionY ** 2);
 				const deplacementX = (directionX / magnitude) * distanceMin;

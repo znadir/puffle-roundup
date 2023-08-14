@@ -20,3 +20,7 @@ export function setCookie(cname, cvalue, exdays) {
 	let expires = "expires=" + d.toUTCString();
 	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
+
+export function randomInteger(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}

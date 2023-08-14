@@ -94,7 +94,6 @@ export default class Game extends Background {
 
 		// sounds
 		this.escape = this.sound.add("escape", { loop: false });
-		this.capture1 = this.sound.add("capture1", { loop: false });
 		this.capture2 = this.sound.add("capture2", { loop: false });
 	}
 
@@ -104,7 +103,7 @@ export default class Game extends Background {
 			const overlaps = this.matter.overlap(pet, this.goal);
 
 			if (!pet.overlaps && overlaps) {
-				Math.random() < 0.6 ? this.capture1.play() : this.capture2.play();
+				this.capture2.play();
 				pet.overlaps = true;
 				this.incCaught(1);
 			} else if (pet.overlaps && !overlaps) {
