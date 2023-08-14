@@ -49,6 +49,7 @@ export default class Instructions extends Background {
 			},
 		};
 
+		const capture1 = this.sound.add("capture1", { loop: false });
 		const playButton = this.add
 			.text(760, 535, "PLAY", startStyle)
 			.setPadding(10, 0, 10, 0);
@@ -56,6 +57,7 @@ export default class Instructions extends Background {
 		playButton.setInteractive({ cursor: "pointer" });
 		playButton.on("pointerover", function () {
 			playButton.setAlpha(0.5);
+			capture1.play();
 		});
 		playButton.on("pointerout", function () {
 			playButton.setAlpha(1);

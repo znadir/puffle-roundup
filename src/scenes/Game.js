@@ -91,6 +91,11 @@ export default class Game extends Background {
 
 		this.addStats();
 		this.addCountdown();
+
+		// sounds
+		this.escape = this.sound.add("escape", { loop: false });
+		this.capture1 = this.sound.add("capture1", { loop: false });
+		this.capture2 = this.sound.add("capture2", { loop: false });
 	}
 
 	update() {
@@ -99,6 +104,7 @@ export default class Game extends Background {
 			const overlaps = this.matter.overlap(pet, this.goal);
 
 			if (!pet.overlaps && overlaps) {
+				Math.random() < 0.6 ? this.capture1.play() : this.capture2.play();
 				pet.overlaps = true;
 				this.incCaught(1);
 			} else if (pet.overlaps && !overlaps) {
@@ -110,6 +116,7 @@ export default class Game extends Background {
 			const safe = this.matter.overlap(pet, this.safeZone);
 
 			if (!safe) {
+				this.escape.play();
 				this.incEscaped(1);
 				this.pets.remove(pet, true, false);
 			}

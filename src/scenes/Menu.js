@@ -14,6 +14,7 @@ export default class Menu extends Background {
 
 	create() {
 		super.create();
+		this.sound.add("backgroundLoop", { loop: true }).play();
 
 		this.add.image(760, 100, "playBox").setOrigin(0.5, 0);
 
@@ -29,11 +30,13 @@ export default class Menu extends Background {
 			},
 		};
 
+		const capture1 = this.sound.add("capture1", { loop: false });
 		const playButton = this.add.text(850, 525, "PLAY", startStyle);
 
 		playButton.setInteractive({ cursor: "pointer" });
 		playButton.on("pointerover", function () {
 			playButton.setAlpha(0.5);
+			capture1.play();
 		});
 		playButton.on("pointerout", function () {
 			playButton.setAlpha(1);
