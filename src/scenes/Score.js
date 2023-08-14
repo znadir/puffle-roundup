@@ -1,5 +1,6 @@
 import Background from "./Background.js";
 import scoreBox from "../assets/scoreBox.png";
+import { getCookie, setCookie } from "../utils.js";
 
 export default class Score extends Background {
 	constructor() {
@@ -11,9 +12,9 @@ export default class Score extends Background {
 		this.escaped = data.escaped;
 		this.timer = data.timer;
 
-		this.coins = Math.round(this.caught * 8.5);
-		this.totalCoins = this.coins;
 		this.score = Math.round(this.timer * this.caught);
+		this.coins = Math.round(this.score / 10);
+		this.totalCoins = this.setTotalCoins(this.coins);
 	}
 
 	preload() {
@@ -104,6 +105,16 @@ export default class Score extends Background {
 			},
 			this
 		);
+	}
+
+	setTotalCoins(coins) {
+		const cookie = getCookie("totalCoins");
+		const totalCoins = isNaN(parseInt(cookie)) ? 0 : parseInt(cookie);
+		const newTotalCoins = totalCoins + coins;
+
+		setCookie("totalCoins", newTotalCoins);
+
+		return newTotalCoins;
 	}
 
 	clearEvents() {
