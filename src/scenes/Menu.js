@@ -41,9 +41,16 @@ export default class Menu extends Background {
 		playButton.on(
 			"pointerup",
 			function () {
+				this.clearEvents();
 				this.scene.start("Instructions");
 			},
 			this
 		);
+	}
+
+	clearEvents() {
+		this.events.off("pointerover");
+		this.events.off("pointerout");
+		this.events.off("pointerup");
 	}
 }

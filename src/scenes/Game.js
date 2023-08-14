@@ -14,7 +14,9 @@ import safeZoneShape from "../assets/safeZoneShape.json";
 export default class Game extends Background {
 	constructor() {
 		super("Game");
+	}
 
+	init() {
 		this.gameAcceleration = 3;
 		this.gameDurationSec = 120;
 		this.statsStyle = {
@@ -28,6 +30,10 @@ export default class Game extends Background {
 				blur: 3,
 			},
 		};
+
+		this.caught = 0;
+		this.escaped = 0;
+		this.timer = 0;
 	}
 
 	preload() {
@@ -67,6 +73,7 @@ export default class Game extends Background {
 			new Pet(this, 324, 577),
 			new Pet(this, 500, 692),
 		]);
+		this.petsCount = this.pets.getLength();
 
 		// pets must be catched in the goal
 		this.goal = this.matter.add.image(wall.x, wall.y, "goal", null, {
@@ -105,6 +112,11 @@ export default class Game extends Background {
 			if (!safe) {
 				this.incEscaped(1);
 				this.pets.remove(pet, true, false);
+			}
+
+			// gameover when all pets are gone/caught
+			if (this.petsCount === this.caught + this.escaped) {
+				this.gameOver();
 			}
 		});
 	}
@@ -147,7 +159,10 @@ export default class Game extends Background {
 			callback: () => {
 				const time = parseInt(timer.text);
 				if (time > 0) {
-					timer.setText(String(time - 1));
+					this.timer = time - 1;
+					timer.setText(String(this.timer));
+				} else {
+					this.gameOver();
 				}
 			},
 		});
@@ -168,18 +183,25 @@ export default class Game extends Background {
 	}
 
 	incCaught(number) {
-		let caughtNumber = parseInt(this.caughtText.text.replace("CAUGHT: ", ""));
-		caughtNumber += number;
+		this.caught = parseInt(this.caughtText.text.replace("CAUGHT: ", ""));
+		this.caught += number;
 
-		this.caughtText.setText("CAUGHT: " + caughtNumber);
+		this.caughtText.setText("CAUGHT: " + this.caught);
 	}
 
 	incEscaped(number) {
-		let escapedNumber = parseInt(
-			this.escapedText.text.replace("ESCAPED: ", "")
-		);
-		escapedNumber += number;
+		this.escaped = parseInt(this.escapedText.text.replace("ESCAPED: ", ""));
+		this.escaped += number;
 
-		this.escapedText.setText("ESCAPED: " + escapedNumber);
+		this.escapedText.setText("ESCAPED: " + this.escaped);
+	}
+
+	gameOver() {
+		this.events.off("pointermove");
+		this.scene.start("Score", {
+			caught: this.caught,
+			escaped: this.escaped,
+			timer: this.timer,
+		});
 	}
 }

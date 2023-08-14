@@ -63,9 +63,16 @@ export default class Instructions extends Background {
 		playButton.on(
 			"pointerup",
 			function () {
+				this.clearEvents();
 				this.scene.start("Game");
 			},
 			this
 		);
+	}
+
+	clearEvents() {
+		this.events.off("pointerover");
+		this.events.off("pointerout");
+		this.events.off("pointerup");
 	}
 }
